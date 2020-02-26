@@ -1,0 +1,7 @@
+{
+    "source_ami_name": "ami-01eb7b0c1119f2550",
+    "ami_name": "debian-k8s-base",
+    "kube_version":" 1.17",
+    "docker_version": "18.09.5",
+    "instance_type": "t2.micro"
+}
