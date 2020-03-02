@@ -7,6 +7,10 @@ write_files:
     content: |
       apiVersion: kubeadm.k8s.io/v1beta2
       kind: InitConfiguration
+      nodeRegistration:
+        name: CONTROL_PLANE_FQDN
+        kubeletExtraArgs:
+         cloud-provider: aws
       bootstrapTokens:
       - groups:
         - system:bootstrappers:kubeadm:default-node-token
@@ -18,13 +22,24 @@ write_files:
       ---
       apiVersion: kubeadm.k8s.io/v1beta2
       kind: ClusterConfiguration
+      apiServer:
+        extraArgs:
+        cloud-provider: aws
+      clusterName: kubernetes
+      controllerManager:
+        extraArgs:
+         cloud-provider: aws
+         configure-cloud-routes: "false"
       kubernetesVersion: ${kubernetes_version}
-      controlPlaneEndpoint: CONTROL_PLANE_IP:6443
+      controlPlaneEndpoint: CONTROL_PLANE_FQDN:6443
       networking:
+        dnsDomain: eu-central-1.compute.internal
         podSubnet: 192.168.0.0/16
 
 runcmd:
   - sed -i "s/CONTROL_PLANE_IP/$(curl http://169.254.169.254/latest/meta-data/local-ipv4)/g" /etc/kubernetes/kubeadm.conf
+  - cat /etc/resolv.conf
+  - sed -i "s/CONTROL_PLANE_FQDN/$(curl http://169.254.169.254/latest/meta-data/local-hostname)/g" /etc/kubernetes/kubeadm.conf
   - kubeadm init --config /etc/kubernetes/kubeadm.conf
   - mkdir -p /home/admin/.kube
   - cp -f /etc/kubernetes/admin.conf /home/admin/.kube/config

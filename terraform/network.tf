@@ -4,6 +4,7 @@ data "aws_availability_zones" "az" {
 
 resource "aws_vpc" "kube" {
   cidr_block = var.vpc_cidr
+  enable_dns_hostnames = "true"
 }
 
 resource "aws_eip" "master" {

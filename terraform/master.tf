@@ -30,12 +30,15 @@ resource "aws_instance" "master" {
   subnet_id = aws_subnet.private.*.id[count.index % length(data.aws_availability_zones.az.names)]
 
   associate_public_ip_address = true
+  iam_instance_profile = aws_iam_instance_profile.master_profile.name
 
   vpc_security_group_ids = [
     "${aws_security_group.ssh.id}",
     "${aws_security_group.kube.id}",
   ]
-
+   tags = {
+    "kubernetes.io/cluster/kubernetes" = "shared"
+  }
   key_name = aws_key_pair.kube.key_name
 
   user_data = data.template_cloudinit_config.master.rendered
