@@ -13,7 +13,7 @@ resource "tls_private_key" "ssh" {
 
 
 resource "aws_key_pair" "kube" {
-  key_name   = "terraform"
+  key_name   = "kube"
   public_key = data.tls_public_key.ssh.public_key_openssh
 }
 

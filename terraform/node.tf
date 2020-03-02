@@ -26,6 +26,7 @@ resource "aws_instance" "node" {
   count         = var.nodes_count
   ami           = var.kubernetes_ami
   instance_type = "t2.micro"
+  iam_instance_profile = aws_iam_instance_profile.node_profile.name
 
   placement_group = aws_placement_group.node.id
 
@@ -40,6 +41,9 @@ resource "aws_instance" "node" {
     "${aws_security_group.kube.id}",
   ]
 
+  tags = {                                        
+    "kubernetes.io/cluster/kubernetes" = "shared"                                                                                                                                            
+  } 
   key_name = aws_key_pair.kube.key_name
 
   user_data = data.template_cloudinit_config.node.rendered
