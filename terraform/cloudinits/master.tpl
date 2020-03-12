@@ -33,7 +33,6 @@ write_files:
       kubernetesVersion: ${kubernetes_version}
       controlPlaneEndpoint: CONTROL_PLANE_FQDN:6443
       networking:
-        dnsDomain: eu-central-1.compute.internal
         podSubnet: 192.168.0.0/16
   - path: /etc/kubernetes/pvc_aws.yaml
     owner: root:root
